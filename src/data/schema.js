@@ -116,12 +116,19 @@ export const types = `
     code: String
     text: String
   }
+
+  type LiveRoomIntegration {
+    status: String
+    participantOne: String
+    participantTwo: String
+  }
 `;
 
 export const queries = `
   type Query {
     conversations(integrationId: String!, customerId: String!): [Conversation]
     getMessengerIntegration(brandCode: String!): Integration
+    getLiveRoom(brandCode: String!): LiveRoomIntegration
     lastUnreadMessage(integrationId: String!, customerId: String!): Message
     totalUnreadCount(integrationId: String!, customerId: String!): Int
     messages(conversationId: String): [Message]
