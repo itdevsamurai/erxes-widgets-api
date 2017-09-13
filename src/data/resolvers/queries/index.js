@@ -1,9 +1,9 @@
 import form from './form';
 import messenger from './messenger';
-import liveCall from './liveCall';
+import liveRoom from './liveRoom';
 
 export default {
   ...form,
   ...messenger,
-  ...liveCall,
+  ...liveRoom,
 };
