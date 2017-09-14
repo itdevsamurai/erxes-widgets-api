@@ -12,7 +12,6 @@ export const types = `
     sentAs: String
   }
 
-
   type UserDetails {
     avatar: String
     fullName: String
@@ -121,6 +120,8 @@ export const types = `
     status: String
     participantOne: String
     participantTwo: String
+    token: String
+    identity: String
   }
 `;
 
