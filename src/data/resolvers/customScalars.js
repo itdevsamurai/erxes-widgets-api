@@ -36,11 +36,15 @@ export default {
       return new Date(value); // value from the client
     },
     serialize(value) {
-      return value.getTime(); // value sent to the client
+      if (value.getTime) {
+        return value.getTime(); // value sent to the client
+      }
+
+      return new Date(value).getTime();
     },
     parseLiteral(ast) {
       if (ast.kind === Kind.INT) {
-        return parseInt(ast.value, 10); // ast value is always in string format
+        return ast.value;
       }
       return null;
     },
@@ -50,8 +54,8 @@ export default {
     name: 'JSON',
     description:
       'The `jSON` scalar type represents jSON values as specified by ' +
-        '[ECMA-404](http://www.ecma-international.org/' +
-        'publications/files/ECMA-ST/ECMA-404.pdf).',
+      '[ECMA-404](http://www.ecma-international.org/' +
+      'publications/files/ECMA-ST/ECMA-404.pdf).',
     serialize: jSONidentity,
     parseValue: jSONidentity,
     parseLiteral: jSONparseLiteral,
