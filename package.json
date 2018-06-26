@@ -18,9 +18,8 @@
   "private": true,
   "scripts": {
     "start": "node dist",
-    "dev": "NODE_ENV=development nodemon src --exec babel-node",
+    "dev": "NODE_ENV=development nodemon -e ts src --exec ts-node",
     "test": "NODE_ENV=test jest --runInBand",
-    "build": "babel src --out-dir dist --ignore __tests__,tests --copy-files",
     "lint": "eslint src",
     "format": "prettier --write --print-width 100 --single-quote --trailing-comma all 'src/**/*.js'",
     "precommit": "lint-staged"
@@ -50,15 +49,18 @@
     "validator": "^7.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.0",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-preset-env": "^1.6.0",
-    "eslint": "3.19.0",
+    "@types/jest": "^23.1.1",
+    "@types/mongodb": "^3.0.21",
+    "@types/mongoose": "^5.0.18",
     "faker": "^4.1.0",
     "husky": "^0.13.4",
     "jest": "^20.0.4",
     "lint-staged": "^3.6.0",
     "nodemon": "^1.11.0",
-    "prettier": "^1.4.4"
+    "prettier": "^1.4.4",
+    "ts-jest": "^22.4.6",
+    "ts-node": "^7.0.0",
+    "tslint-config-prettier": "^1.13.0",
+    "typescript": "^2.9.2"
   }
 }

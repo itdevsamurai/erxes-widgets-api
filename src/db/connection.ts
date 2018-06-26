@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+import * as dotenv from 'dotenv';
+import * as mongoose from 'mongoose';
 
 dotenv.config();
 

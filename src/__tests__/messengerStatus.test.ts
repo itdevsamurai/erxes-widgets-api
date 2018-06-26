@@ -1,5 +1,3 @@
-/* eslint-env jest */
-
 import { isOnline, isTimeInBetween } from '../data/resolvers/utils/messengerStatus';
 
 describe('Manual mode', () => {

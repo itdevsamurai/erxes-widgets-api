@@ -1,5 +1,5 @@
-import Random from 'meteor-random';
-import faker from 'faker';
+import * as Random from 'meteor-random';
+import * as faker from 'faker';
 import {
   Integrations,
   Brands,

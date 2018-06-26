@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import Random from 'meteor-random';
+import * as mongoose from 'mongoose';
+import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
 
-const LocationSchema = mongoose.Schema(
+const LocationSchema = new mongoose.Schema(
   {
     remoteAddress: String,
     country: String,
@@ -15,7 +15,7 @@ const LocationSchema = mongoose.Schema(
   { _id: false },
 );
 
-const VisitorContactSchema = mongoose.Schema(
+const VisitorContactSchema = new mongoose.Schema(
   {
     email: String,
     phone: String,
@@ -23,7 +23,7 @@ const VisitorContactSchema = mongoose.Schema(
   { _id: false },
 );
 
-const CustomerSchema = mongoose.Schema({
+const CustomerSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,
@@ -90,15 +90,15 @@ class Customer {
    */
   static getCustomer({ email, phone, cachedCustomerId }) {
     if (email) {
-      return this.findOne({ email });
+      return Customers.findOne({ email });
     }
 
     if (phone) {
-      return this.findOne({ phone });
+      return Customers.findOne({ phone });
     }
 
     if (cachedCustomerId) {
-      return this.findOne({ _id: cachedCustomerId });
+      return Customers.findOne({ _id: cachedCustomerId });
     }
 
     return null;
@@ -110,7 +110,7 @@ class Customer {
    * @return {Promise} Newly created customer object
    */
   static async createCustomer(doc) {
-    const customer = await this.create({
+    const customer = await Customers.create({
       ...doc,
       createdAt: new Date(),
     });
@@ -157,9 +157,9 @@ class Customer {
 
     this.assignFields(customData || {}, doc);
 
-    await this.findByIdAndUpdate(_id, { $set: doc });
+    await Customers.findByIdAndUpdate(_id, { $set: doc });
 
-    return this.findOne({ _id });
+    return Customers.findOne({ _id });
   }
 
   /**
@@ -183,9 +183,9 @@ class Customer {
    * @return {Promise} Updated customer
    */
   static async markCustomerAsActive(customerId) {
-    await this.update({ _id: customerId }, { $set: { 'messengerData.isActive': true } });
+    await Customers.update({ _id: customerId }, { $set: { 'messengerData.isActive': true } });
 
-    return this.findOne({ _id: customerId });
+    return Customers.findOne({ _id: customerId });
   }
 
   /**
@@ -194,7 +194,7 @@ class Customer {
    * @return {Promise} Updated customer
    */
   static async markCustomerAsNotActive(customerId) {
-    await this.update(
+    await Customers.update(
       { _id: customerId },
       {
         $set: {
@@ -204,7 +204,7 @@ class Customer {
       },
     );
 
-    return this.findOne({ _id: customerId });
+    return Customers.findOne({ _id: customerId });
   }
 
   /*
@@ -214,7 +214,7 @@ class Customer {
    */
   static async updateMessengerSession({ _id, url }) {
     const now = new Date();
-    const customer = await this.findOne({ _id });
+    const customer = await Customers.findOne({ _id });
 
     const query = {
       $set: {
@@ -236,24 +236,24 @@ class Customer {
     }
 
     // update
-    await this.findByIdAndUpdate(_id, query);
+    await Customers.findByIdAndUpdate(_id, query);
 
     // updated customer
-    return this.findOne({ _id });
+    return Customers.findOne({ _id });
   }
 
   /*
    * Update customer's location info
    */
   static async updateLocation(_id, browserInfo) {
-    await this.findByIdAndUpdate(
+    await Customers.findByIdAndUpdate(
       { _id },
       {
         $set: { location: browserInfo },
       },
     );
 
-    return this.findOne({ _id });
+    return Customers.findOne({ _id });
   }
 
   /*
@@ -263,10 +263,10 @@ class Customer {
    * @return {Promise}
    */
   static async addCompany(_id, companyId) {
-    await this.findByIdAndUpdate(_id, { $addToSet: { companyIds: companyId } });
+    await Customers.findByIdAndUpdate(_id, { $addToSet: { companyIds: companyId } });
 
     // updated customer
-    return this.findOne({ _id });
+    return Customers.findOne({ _id });
   }
 
   /*
@@ -275,14 +275,14 @@ class Customer {
    */
   static async saveVisitorContactInfo({ customerId, type, value }) {
     if (type === 'email') {
-      await this.update({ _id: customerId }, { 'visitorContactInfo.email': value });
+      await Customers.update({ _id: customerId }, { 'visitorContactInfo.email': value });
     }
 
     if (type === 'phone') {
-      await this.update({ _id: customerId }, { 'visitorContactInfo.phone': value });
+      await Customers.update({ _id: customerId }, { 'visitorContactInfo.phone': value });
     }
 
-    return this.findOne({ _id: customerId });
+    return Customers.findOne({ _id: customerId });
   }
 }
 

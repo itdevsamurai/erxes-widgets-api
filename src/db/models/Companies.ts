@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import Random from 'meteor-random';
+import * as mongoose from 'mongoose';
+import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
 
-const CompanySchema = mongoose.Schema({
+const CompanySchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,
@@ -50,7 +50,7 @@ class Company {
    * @return {Promise} Newly created company object
    */
   static async createCompany(doc) {
-    const company = await this.create(doc);
+    const company = await Companies.create(doc);
 
     // call app api's create customer log
     mutateAppApi(`
@@ -69,7 +69,7 @@ class Company {
    * @return {Promise} previously saved company or newly created company object
    */
   static async getOrCreate(doc) {
-    const company = await this.findOne({ name: doc.name });
+    const company = await Companies.findOne({ name: doc.name });
 
     if (company) {
       return company;
