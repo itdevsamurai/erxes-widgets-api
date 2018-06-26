@@ -23,10 +23,27 @@ export const replaceKeys = ({ content, customer, user }) => {
  * checks individual rule
  * @return boolean
  */
-export const checkRule = ({ rule, browserInfo, numberOfVisits }) => {
+interface IBrowserInfo {
+  language?: string,
+  url?: string,
+  city?: string,
+  country?: string,
+}
+interface IRule {
+  value?: string,
+  kind: string,
+  condition: string,
+}
+interface ICheckRuleParams {
+  rule: IRule,
+  browserInfo: IBrowserInfo,
+  numberOfVisits?: number,
+}
+export const checkRule = (params: ICheckRuleParams) => {
+  const { rule, browserInfo, numberOfVisits } = params;
   const { language, url, city, country } = browserInfo;
-  const { kind, condition } = rule;
-  const ruleValue = rule.value;
+  const { value, kind, condition } = rule;
+  const ruleValue = value;
 
   let valueToTest;
 
@@ -102,7 +119,14 @@ export const checkRule = ({ rule, browserInfo, numberOfVisits }) => {
  * satisfying given engage message's rules
  * @return Promise
  */
-export const checkRules = async ({ rules, browserInfo, numberOfVisits }) => {
+interface ICheckRulesParams {
+  rules: IRule[],
+  browserInfo: IBrowserInfo,
+  numberOfVisits?: number,
+}
+export const checkRules = async (params: ICheckRulesParams) => {
+  const { rules, browserInfo, numberOfVisits } = params;
+
   let passedAllRules = true;
 
   rules.forEach(rule => {

@@ -15,7 +15,7 @@ export default {
    * when connection established
    * @return {Promise}
    */
-  async messengerConnect(root, args) {
+  async messengerConnect(root, args, context) {
     const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId } = args;
 
     // find integration
@@ -69,7 +69,9 @@ export default {
    * Create a new message
    * @return {Promise}
    */
-  async insertMessage(root, { integrationId, customerId, conversationId, message, attachments }) {
+  async insertMessage(root, args, context) {
+    const { integrationId, customerId, conversationId, message, attachments } = args;
+
     // get or create conversation
     const conversation = await Conversations.getOrCreateConversation({
       conversationId,
@@ -118,7 +120,7 @@ export default {
    * Mark given conversation's messages as read
    * @return {Promise}
    */
-  async readConversationMessages(root, args) {
+  async readConversationMessages(root, args, context) {
     const response = await Messages.update(
       {
         conversationId: args.conversationId,
@@ -138,7 +140,7 @@ export default {
     return response;
   },
 
-  saveCustomerGetNotified(root, args) {
+  saveCustomerGetNotified(root, args, context) {
     return Customers.saveVisitorContactInfo(args);
   },
 

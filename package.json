@@ -49,9 +49,7 @@
     "validator": "^7.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^23.1.1",
-    "@types/mongodb": "^3.0.21",
-    "@types/mongoose": "^5.0.18",
+    "@types/jest": "^23.1.2",
     "faker": "^4.1.0",
     "husky": "^0.13.4",
     "jest": "^20.0.4",

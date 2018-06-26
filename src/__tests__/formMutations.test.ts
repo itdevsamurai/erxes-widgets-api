@@ -72,25 +72,25 @@ describe('Form mutations', () => {
       const errors = await validate(formId, submissions);
 
       // must be 4 error
-      expect(errors.length).equal(4);
+      expect(errors.length).toEqual(4);
 
       const [requiredError, emailError, numberError, dateError] = errors;
 
       // required
-      expect(requiredError.fieldId).equal(requiredFieldId);
-      expect(requiredError.code).equal('required');
+      expect(requiredError.fieldId).toEqual(requiredFieldId);
+      expect(requiredError.code).toEqual('required');
 
       // email
-      expect(emailError.fieldId).equal(emailFieldId);
-      expect(emailError.code).equal('invalidEmail');
+      expect(emailError.fieldId).toEqual(emailFieldId);
+      expect(emailError.code).toEqual('invalidEmail');
 
       // number
-      expect(numberError.fieldId).equal(numberFieldId);
-      expect(numberError.code).equal('invalidNumber');
+      expect(numberError.fieldId).toEqual(numberFieldId);
+      expect(numberError.code).toEqual('invalidNumber');
 
       // date
-      expect(dateError.fieldId).equal(dateFieldId);
-      expect(dateError.code).equal('invalidDate');
+      expect(dateError.fieldId).toEqual(dateFieldId);
+      expect(dateError.code).toEqual('invalidDate');
     });
   });
 

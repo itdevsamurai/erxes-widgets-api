@@ -216,7 +216,7 @@ class Customer {
     const now = new Date();
     const customer = await Customers.findOne({ _id });
 
-    const query = {
+    const query: any = {
       $set: {
         // update messengerData
         'messengerData.lastSeenAt': now,
@@ -224,7 +224,8 @@ class Customer {
       },
     };
 
-    if (now - customer.messengerData.lastSeenAt > 6 * 1000) {
+    // TODO: check getTime
+    if (now.getTime() - customer.messengerData.lastSeenAt > 6 * 1000) {
       // update session count
       query.$inc = { 'messengerData.sessionCount': 1 };
 

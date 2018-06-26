@@ -80,7 +80,9 @@ export default {
 
   isMessengerOnline(root, args) {
     return Integrations.findOne({ _id: args.integrationId }).then(integration => {
-      const { availabilityMethod, isOnline, onlineHours } = integration.messengerData || {};
+      const messengerData = integration.messengerData || {};
+      const { availabilityMethod, isOnline, onlineHours } = messengerData;
+
       const modifiedIntegration = Object.assign({}, integration, {
         availabilityMethod,
         isOnline,

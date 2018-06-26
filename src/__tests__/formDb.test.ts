@@ -14,7 +14,7 @@ describe('Forms', () => {
 
   beforeEach(async () => {
     // Creating test form
-    _form = await formFactory({});
+    _form = await formFactory();
   });
 
   afterEach(() => {
