@@ -43,16 +43,13 @@ describe('Customers', () => {
         integrationId: _customer.integrationId,
         email: _customer.email,
         isUser: _customer.isUser,
-        name: _customer.name,
       },
       customData,
-      {},
     );
 
     expect(customer).toBeDefined();
     expect(customer.email).toBe(_customer.email);
     expect(customer.isUser).toBe(_customer.isUser);
-    expect(customer.name).toBe(_customer.name);
     expect(customer.messengerData.lastSeenAt).toBeDefined();
     expect(customer.messengerData.isActive).toBe(true);
     expect(customer.messengerData.sessionCount).toBe(1);
@@ -75,7 +72,6 @@ describe('Customers', () => {
     expect(customer).toBeDefined();
     expect(customer.email).toBe(_customer.email);
     expect(customer.isUser).toBe(_customer.isUser);
-    expect(customer.name).toBe(_customer.name);
     expect(customer._id).toBe(_customer._id);
     expect(customer.integrationId).toBe(_customer.integrationId);
     expect(customer.createdAt).toEqual(_customer.createdAt);
@@ -90,7 +86,6 @@ describe('Customers', () => {
     expect(customer).toBeDefined();
     expect(customer.email).toBe(_customer.email);
     expect(customer.isUser).toBe(_customer.isUser);
-    expect(customer.name).toBe(_customer.name);
     expect(customer._id).toBe(_customer._id);
     expect(customer.integrationId).toBe(_customer.integrationId);
     expect(customer.createdAt).toEqual(_customer.createdAt);
@@ -122,7 +117,7 @@ describe('Customers', () => {
 
     expect(customer).toBeDefined();
     expect(customer.messengerData.isActive).toBeFalsy();
-    expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
+    expect(customer.messengerData.lastSeenAt >= now.getTime()).toBeTruthy();
 
     // active
     customer = await Customers.markCustomerAsActive(_customer._id);
@@ -138,7 +133,7 @@ describe('Customers', () => {
     });
 
     expect(customer.messengerData.isActive).toBeTruthy();
-    expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
+    expect(customer.messengerData.lastSeenAt >= now.getTime()).toBeTruthy();
     expect(customer.urlVisits['/career/open']).toBe(1);
   });
 

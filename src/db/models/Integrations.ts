@@ -1,8 +1,41 @@
-import * as mongoose from 'mongoose';
+import { Document, Schema, Model, model } from 'mongoose';
 import * as Random from 'meteor-random';
 import Brands from './Brands';
 
-const IntegrationSchema = new mongoose.Schema({
+interface IFormData {
+  loadType: string,
+  successAction?: string,
+  fromEmail?: string,
+  userEmailTitle?: string,
+  userEmailContent?: string,
+  adminEmails?: string[],
+  adminEmailTitle?: string,
+  adminEmailContent?: string,
+  thankContent?: string,
+  redirectUrl?: string,
+};
+
+interface IIntegrationDocument extends Document {
+  _id: string,
+  name: string,
+  brandId: string,
+  languageCode: string,
+  formId: string,
+  kind: string,
+  formData: IFormData,
+  messengerData: object,
+  uiOptions: object,
+};
+
+interface IIntegrationModel extends Model<IIntegrationDocument> {
+  getIntegration(
+    brandCode: string,
+    kind: string,
+    brandObject?: boolean
+  ): IIntegrationDocument
+}
+
+const IntegrationSchema = new Schema({
   _id: {
     type: String,
     unique: true,
@@ -48,6 +81,9 @@ class Integration {
 
 IntegrationSchema.loadClass(Integration);
 
-const Integrations = mongoose.model('integrations', IntegrationSchema);
+const Integrations = model<IIntegrationDocument, IIntegrationModel>(
+  'integrations',
+  IntegrationSchema
+);
 
 export default Integrations;

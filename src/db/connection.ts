@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 
 import * as dotenv from 'dotenv';
-import * as mongoose from 'mongoose';
+import { Promise } from 'q';
+import mongoose = require('mongoose');
 
 dotenv.config();
 
@@ -9,6 +10,7 @@ const { NODE_ENV, TEST_MONGO_URL, MONGO_URL } = process.env;
 const isTest = NODE_ENV == 'test';
 const DB_URI = isTest ? TEST_MONGO_URL : MONGO_URL;
 
+//use q library for mongoose promise
 mongoose.Promise = global.Promise;
 
 if (!isTest) {

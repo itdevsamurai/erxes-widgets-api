@@ -1,7 +1,7 @@
-import * as mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 import * as Random from 'meteor-random';
 
-const BrandSchema = new mongoose.Schema({
+const BrandSchema = new Schema({
   _id: {
     type: String,
     unique: true,
@@ -10,6 +10,6 @@ const BrandSchema = new mongoose.Schema({
   code: String,
 });
 
-const Brands = mongoose.model('brands', BrandSchema);
+const Brands = model('brands', BrandSchema);
 
 export default Brands;

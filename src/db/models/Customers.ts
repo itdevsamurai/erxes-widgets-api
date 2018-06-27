@@ -1,8 +1,99 @@
-import * as mongoose from 'mongoose';
+import { Document, Schema, Model, model } from 'mongoose';
 import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
 
-const LocationSchema = new mongoose.Schema(
+// interfaces ==========
+interface ILocation {
+  remoteAddress: string,
+  country: string,
+  city: string,
+  region: string,
+  hostname: string,
+  language: string,
+  userAgent: string,
+};
+
+interface IVisitorContact {
+  email: string,
+  phone: string,
+};
+
+interface IMessengerData {
+  lastSeenAt: number,
+  sessionCount: number,
+  isActive: boolean,
+  customData: any,
+};
+
+interface ICustomerDocument extends Document {
+  _id: string,
+  integrationId: string,
+  email: string,
+  phone: string,
+  isUser: boolean,
+  firstName: string,
+  lastName: string,
+  createdAt: Date,
+  lastSeenAt: Date,
+  messengerData: IMessengerData,
+  companyIds: string[],
+  description: string,
+  location: ILocation,
+  visitorContactInfo: IVisitorContact,
+  urlVisits: object,
+};
+
+interface ICustomerModel extends Model<ICustomerDocument> {
+  getCustomer({
+    email,
+    phone,
+    cachedCustomerId
+  } : {
+    email: string,
+    phone?: string,
+    cachedCustomerId?: string
+  }): Promise<ICustomerDocument>
+
+  createMessengerCustomer(
+    {
+      integrationId,
+      email,
+      phone,
+      isUser,
+    } : {
+      integrationId: string,
+      email: string,
+      isUser: boolean,
+      phone?: string,
+    },
+    data: object,
+  ): Promise<ICustomerDocument>
+
+  updateMessengerCustomer(
+    _id: string,
+    doc: object,
+    customData: object
+  ): Promise<ICustomerDocument>
+
+  getOrCreateCustomer(doc): Promise<ICustomerDocument>
+  markCustomerAsActive(customerId: string): Promise<ICustomerDocument>
+  markCustomerAsNotActive(customerId: string): Promise<ICustomerDocument>
+  updateMessengerSession({ _id, url } : { _id: string, url: string }): Promise<ICustomerDocument>
+  updateLocation(_id: string, browserInfo: object): Promise<ICustomerDocument>
+  addCompany(_id: string, companyId: string): Promise<ICustomerDocument>
+  saveVisitorContactInfo({
+    customerId,
+    type,
+    value
+  } : {
+    customerId: string,
+    type: string,
+    value: string
+  }): Promise<ICustomerDocument>
+}
+
+// schemas ============
+const LocationSchema = new Schema(
   {
     remoteAddress: String,
     country: String,
@@ -15,7 +106,7 @@ const LocationSchema = new mongoose.Schema(
   { _id: false },
 );
 
-const VisitorContactSchema = new mongoose.Schema(
+const VisitorContactSchema = new Schema(
   {
     email: String,
     phone: String,
@@ -23,7 +114,7 @@ const VisitorContactSchema = new mongoose.Schema(
   { _id: false },
 );
 
-const CustomerSchema = new mongoose.Schema({
+const CustomerSchema = new Schema({
   _id: {
     type: String,
     unique: true,
@@ -289,6 +380,6 @@ class Customer {
 
 CustomerSchema.loadClass(Customer);
 
-const Customers = mongoose.model('customers', CustomerSchema);
+const Customers = model<ICustomerDocument, ICustomerModel>('customers', CustomerSchema);
 
 export default Customers;

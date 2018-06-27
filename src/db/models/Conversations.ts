@@ -1,6 +1,56 @@
-import { Schema, model } from 'mongoose';
+import { Document, Schema, Model, model } from 'mongoose';
 import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
+
+interface IConversationDocument extends Document {
+  _id: string,
+  createdAt: Date,
+  updatedAt: Date,
+  content: string,
+  customerId: string,
+  userId: string,
+  integrationId: string,
+  number: number,
+  messageCount: number,
+  status: string,
+  readUserIds: string[],
+  participatedUserIds: string[],
+};
+
+interface STATUSES {
+  NEW: 'new',
+  OPEN: 'open',
+  CLOSED: 'closed',
+  ALL_LIST: ['new', 'open', 'closed'],
+};
+
+interface IConversationModel extends Model<IConversationDocument> {
+  getConversationStatuses(): STATUSES
+
+  createConversation({
+    integrationId,
+    userId,
+    customerId,
+    content
+  } : {
+    integrationId: string,
+    userId?: string,
+    customerId: string,
+    content: string
+  }): Promise<IConversationDocument>
+
+  getOrCreateConversation({
+    conversationId,
+    integrationId,
+    customerId,
+    message
+  } : {
+    conversationId?: string,
+    integrationId: string,
+    customerId: string,
+    message: string
+  }): Promise<IConversationDocument>
+}
 
 const ConversationSchema = new Schema({
   _id: {
@@ -21,7 +71,7 @@ const ConversationSchema = new Schema({
   participatedUserIds: [String],
 });
 
-class Conversation {
+class ConversationModel extends Model {
   static getConversationStatuses() {
     return {
       NEW: 'new',
@@ -36,9 +86,7 @@ class Conversation {
    * @param  {Object} conversationObj
    * @return {Promise} Newly created conversation object
    */
-  static async createConversation(conversationObj) {
-    const { integrationId, userId, customerId, content } = conversationObj;
-
+  static async createConversation({ integrationId, userId, customerId, content }) {
     const count = await Conversations.find({ customerId, integrationId }).count();
 
     const conversation = await Conversations.create({
@@ -46,7 +94,7 @@ class Conversation {
       userId,
       integrationId,
       content,
-      status: this.getConversationStatuses().NEW,
+      status: Conversations.getConversationStatuses().NEW,
       createdAt: new Date(),
       messageCount: 0,
 
@@ -86,14 +134,14 @@ class Conversation {
           readUserIds: [],
 
           // reopen this conversation if it's closed
-          status: this.getConversationStatuses().OPEN,
+          status: Conversations.getConversationStatuses().OPEN,
         },
         { new: true },
       );
     }
 
     // create conversation
-    return this.createConversation({
+    return Conversations.createConversation({
       customerId,
       integrationId,
       content: message,
@@ -101,8 +149,10 @@ class Conversation {
   }
 }
 
-ConversationSchema.loadClass(Conversation);
+ConversationSchema.loadClass(ConversationModel);
 
-const Conversations = model('conversations', ConversationSchema);
+const Conversations = model<IConversationDocument, IConversationModel>(
+  'conversations', ConversationSchema
+);
 
 export default Conversations;

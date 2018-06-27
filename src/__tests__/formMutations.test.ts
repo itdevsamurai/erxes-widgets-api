@@ -51,21 +51,21 @@ describe('Form mutations', () => {
     const formId = 'DFDFDAFD';
     const contentTypeId = formId;
 
-    const requiredFieldId = await formFieldFactory({ contentTypeId, isRequired: true })._id;
-    const emailFieldId = await formFieldFactory({ contentTypeId, validation: 'email' })._id;
-    const numberFieldId = await formFieldFactory({ contentTypeId, validation: 'number' })._id;
-    const validNumberFieldId = await formFieldFactory({ contentTypeId, validation: 'number' })._id;
-    const validDateFieldId = await formFieldFactory({ contentTypeId, validation: 'date' })._id;
-    const dateFieldId = await formFieldFactory({ contentTypeId, validation: 'date' })._id;
+    const requiredField = await formFieldFactory({ contentTypeId, isRequired: true });
+    const emailField = await formFieldFactory({ contentTypeId, validation: 'email' });
+    const numberField = await formFieldFactory({ contentTypeId, validation: 'number' });
+    const validNumberField = await formFieldFactory({ contentTypeId, validation: 'number' });
+    const validDateField = await formFieldFactory({ contentTypeId, validation: 'date' });
+    const dateField = await formFieldFactory({ contentTypeId, validation: 'date' });
 
     it('validate', async () => {
       const submissions = [
-        { _id: requiredFieldId, value: null },
-        { _id: emailFieldId, value: 'email', validation: 'email' },
-        { _id: numberFieldId, value: 'number', validation: 'number' },
-        { _id: validNumberFieldId, value: 10, validation: 'number' },
-        { _id: dateFieldId, value: 'date', validation: 'date' },
-        { _id: validDateFieldId, value: '2012-09-01', validation: 'date' },
+        { _id: requiredField._id, value: null },
+        { _id: emailField._id, value: 'email', validation: 'email' },
+        { _id: numberField._id, value: 'number', validation: 'number' },
+        { _id: validNumberField._id, value: 10, validation: 'number' },
+        { _id: dateField._id, value: 'date', validation: 'date' },
+        { _id: validDateField._id, value: '2012-09-01', validation: 'date' },
       ];
 
       // call function
@@ -77,19 +77,19 @@ describe('Form mutations', () => {
       const [requiredError, emailError, numberError, dateError] = errors;
 
       // required
-      expect(requiredError.fieldId).toEqual(requiredFieldId);
+      expect(requiredError.fieldId).toEqual(requiredField._id);
       expect(requiredError.code).toEqual('required');
 
       // email
-      expect(emailError.fieldId).toEqual(emailFieldId);
+      expect(emailError.fieldId).toEqual(emailField._id);
       expect(emailError.code).toEqual('invalidEmail');
 
       // number
-      expect(numberError.fieldId).toEqual(numberFieldId);
+      expect(numberError.fieldId).toEqual(numberField._id);
       expect(numberError.code).toEqual('invalidNumber');
 
       // date
-      expect(dateError.fieldId).toEqual(dateFieldId);
+      expect(dateError.fieldId).toEqual(dateField._id);
       expect(dateError.code).toEqual('invalidDate');
     });
   });

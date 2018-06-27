@@ -1,8 +1,40 @@
-import * as mongoose from 'mongoose';
+import { Document, Schema, Model, model } from 'mongoose';
 import * as Random from 'meteor-random';
 
+interface ICallout {
+  title: string,
+  body: string,
+  buttonText: string,
+  featuredImage: string,
+  skip: boolean,
+};
+
+interface ISubmission {
+  customerId: string,
+  submittedAt: Date,
+};
+
+interface IFormDocument extends Document {
+  _id: string,
+  title: string,
+  description: string,
+  code: string,
+  buttonText: string,
+  themeColor: string,
+  callout: ICallout,
+  viewCount: number,
+  contactsGathered: number,
+  submissions: ISubmission[],
+};
+
+interface IFormModel extends Model<IFormDocument> {
+  increaseViewCount(formId: string): Promise<string>
+  increaseContactsGathered(formId: string): Promise<string>
+  addSubmission(formId: string, customerId: string): Promise<string>
+}
+
 // schema for form's callout component
-const CalloutSchema = new mongoose.Schema(
+const CalloutSchema = new Schema(
   {
     title: String,
     body: String,
@@ -13,7 +45,7 @@ const CalloutSchema = new mongoose.Schema(
   { _id: false },
 );
 
-const SubmissionSchema = new mongoose.Schema(
+const SubmissionSchema = new Schema(
   {
     customerId: String,
     submittedAt: Date,
@@ -21,7 +53,7 @@ const SubmissionSchema = new mongoose.Schema(
   { _id: false },
 );
 
-const FormSchema = new mongoose.Schema({
+const FormSchema = new Schema({
   _id: {
     type: String,
     unique: true,
@@ -98,6 +130,6 @@ class Form {
 
 FormSchema.loadClass(Form);
 
-const Forms = mongoose.model('forms', FormSchema);
+const Forms = model<IFormDocument, IFormModel>('forms', FormSchema);
 
 export default Forms;

@@ -1,7 +1,43 @@
-import * as mongoose from 'mongoose';
+import { Document, Schema, Model, model } from 'mongoose';
 import * as Random from 'meteor-random';
 
-const EngageMessageSchema = new mongoose.Schema({
+interface IRule {
+  _id: string,
+  kind: string,
+  text: string,
+  condition: string,
+  value: string,
+};
+
+interface IMessenger {
+  brandId: string,
+  kind: string,
+  sentAs: string,
+  content: string,
+  rules: IRule[],
+};
+
+interface IEngageMessageDocument extends Document {
+  _id: string,
+  kind: string,
+  segmentId: string,
+  customerIds: string[],
+  title: string,
+  fromUserId: string,
+  method: string,
+  email: object,
+  messenger: IMessenger,
+  isDraft: boolean,
+  isLive: boolean,
+  stopDate: Date,
+  messengerReceivedCustomerIds: string[],
+  deliveryReports: object,
+};
+
+interface IEngageMessageModel extends Model<IEngageMessageDocument> {
+}
+
+const EngageMessageSchema = new Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   kind: String,
   segmentId: String,
@@ -18,8 +54,4 @@ const EngageMessageSchema = new mongoose.Schema({
   deliveryReports: Object,
 });
 
-class EngageMessage {}
-
-EngageMessageSchema.loadClass(EngageMessage);
-
-export const EngageMessages = mongoose.model('engage_messages', EngageMessageSchema);
+export const EngageMessages = model<IEngageMessageDocument, IEngageMessageModel>('engage_messages', EngageMessageSchema);

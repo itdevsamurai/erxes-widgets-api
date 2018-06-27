@@ -1,16 +1,61 @@
-import * as mongoose from 'mongoose';
+import { Document, Model, Schema, model } from 'mongoose';
 import * as Random from 'meteor-random';
 
 import Conversations from './Conversations';
 
-const AttachmentSchema = new mongoose.Schema({
+interface IAttachments {
+  url: string,
+  name: string,
+  size: number,
+  type: string,
+};
+
+interface IMessageDocument extends Document {
+  _id: string,
+  userId: string,
+  conversationId: string,
+  customerId: string,
+  content: string,
+  attachments: IAttachments[],
+  createdAt: Date,
+  isCustomerRead: Boolean,
+  internal: Boolean,
+  engageData: Object,
+  formWidgetData: Object,
+};
+
+interface IMessageModel extends Model<IMessageDocument> {
+  createMessage({
+    conversationId,
+    customerId,
+    userId,
+    content: message,
+    attachments,
+    engageData,
+    formWidgetData,
+  } : {
+    conversationId: string,
+    content: string,
+    customerId?: string,
+    userId?: string,
+    attachments?: object[],
+    engageData?: object,
+    formWidgetData?: object[],
+  }): Promise<IMessageDocument>
+
+  forceReadCustomerPreviousEngageMessages(
+    customerId: string
+  ): Promise<IMessageDocument>
+}
+
+const AttachmentSchema = new Schema({
   url: { type: String, required: true },
   name: { type: String, required: true },
   size: { type: Number, required: true },
   type: { type: String, required: true },
 });
 
-const MessageSchema = new mongoose.Schema({
+const MessageSchema = new Schema({
   _id: {
     type: String,
     unique: true,
@@ -28,15 +73,15 @@ const MessageSchema = new mongoose.Schema({
   formWidgetData: Object,
 });
 
-class Message {
+class MessageModel {
   /**
    * Create new message
    * @param  {Object} messageObj
    * @return {Promise} New message
    */
-  static async createMessage(messageObj) {
+  static async createMessage(args) {
     const conversation = await Conversations.findOne({
-      _id: messageObj.conversationId,
+      _id: args.conversationId,
     });
 
     // increment messageCount
@@ -53,26 +98,32 @@ class Message {
     return Messages.create({
       createdAt: new Date(),
       internal: false,
-      ...messageObj,
+      ...args,
     });
   }
 
   // force read previous unread engage messages ============
   static forceReadCustomerPreviousEngageMessages(customerId) {
+    const selector = {
+      customerId,
+      engageData: { $exists: true },
+      isCustomerRead: { $ne: true },
+    };
+
     return Messages.update(
-      {
-        customerId,
-        engageData: { $exists: true },
-        isCustomerRead: { $ne: true },
-      },
+      selector,
       { $set: { isCustomerRead: true } },
       { multi: true },
     );
+
+    return Messages.findOne(selector);
   }
 }
 
-MessageSchema.loadClass(Message);
+MessageSchema.loadClass(MessageModel);
 
-const Messages = mongoose.model('conversation_messages', MessageSchema);
+const Messages = model<IMessageDocument, IMessageModel>(
+  'conversation_messages', MessageSchema
+);
 
 export default Messages;

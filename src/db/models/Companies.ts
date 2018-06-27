@@ -1,8 +1,24 @@
-import * as mongoose from 'mongoose';
+import { Document, Schema, Model, model } from 'mongoose';
 import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
 
-const CompanySchema = new mongoose.Schema({
+export interface ICompanyDocument extends Document {
+  _id: string,
+  name?: string,
+  size?: number,
+  industry?: string,
+  website?: string,
+  plan?: string,
+  lastSeenAt: Date,
+  sessionCount: number,
+  tagIds?: string[],
+};
+
+interface ICompanyModel extends Model<ICompanyDocument> {
+  getOrCreate(doc: object): ICompanyDocument
+}
+
+const CompanySchema = new Schema({
   _id: {
     type: String,
     unique: true,
@@ -44,11 +60,6 @@ const CompanySchema = new mongoose.Schema({
 });
 
 class Company {
-  /**
-   * Create a company
-   * @param  {Object} companyObj object
-   * @return {Promise} Newly created company object
-   */
   static async createCompany(doc) {
     const company = await Companies.create(doc);
 
@@ -81,6 +92,6 @@ class Company {
 
 CompanySchema.loadClass(Company);
 
-const Companies = mongoose.model('companies', CompanySchema);
+const Companies = model<ICompanyDocument, ICompanyModel>('companies', CompanySchema);
 
 export default Companies;
